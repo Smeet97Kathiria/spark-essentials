@@ -59,7 +59,7 @@ object ColumnsAndExpressions extends App {
   // renaming a column
   val carsWithColumnRenamed = carsDF.withColumnRenamed("Weight_in_lbs", "Weight in pounds")
   // careful with column names
-  carsWithColumnRenamed.selectExpr("`Weight in pounds`")
+  carsWithColumnRenamed.selectExpr("`Weight in pounds`") // backticks ` ` need to be used for column names with space
   // remove a column
   carsWithColumnRenamed.drop("Cylinders", "Displacement")
 

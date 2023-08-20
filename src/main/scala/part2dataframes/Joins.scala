@@ -4,7 +4,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{expr, max, col}
 
 object Joins extends App {
-
+ // joins are wide transformations, read is expensive since data is shuffled across various machines.
   val spark = SparkSession.builder()
     .appName("Joins")
     .config("spark.master", "local")
@@ -44,7 +44,7 @@ object Joins extends App {
 
 
   // things to bear in mind
-  // guitaristsBandsDF.select("id", "band").show // this crashes
+  // guitaristsBandsDF.select("id", "band").show // this crashes, since there are two column with name id due to join and spark does not know which to use.
 
   // option 1 - rename the column on which we are joining
   guitaristsDF.join(bandsDF.withColumnRenamed("id", "band"), "band")
@@ -102,6 +102,5 @@ object Joins extends App {
   val bestPaidEmployeesDF = employeesSalariesDF.orderBy(col("maxSalary").desc).limit(10)
   val bestPaidJobsDF = bestPaidEmployeesDF.join(mostRecentJobTitlesDF, "emp_no")
 
-  bestPaidJobsDF.show()
 }
 

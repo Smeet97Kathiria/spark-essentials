@@ -5,7 +5,7 @@ import org.apache.spark.sql.types._
 
 object DataFramesBasics extends App {
 
-  // creating a SparkSession
+  // creating a SparkSession -> Entrypoint for creating, reading and writing dataframes.
   val spark = SparkSession.builder()
     .appName("DataFrames Basics")
     .config("spark.master", "local")
@@ -14,14 +14,14 @@ object DataFramesBasics extends App {
   // reading a DF
   val firstDF = spark.read
     .format("json")
-    .option("inferSchema", "true")
+    .option("inferSchema", "true") // in production never infer a schema due to changing data types or mismatched data types in source data.
     .load("src/main/resources/data/cars.json")
 
   // showing a DF
   firstDF.show()
   firstDF.printSchema()
 
-  // get rows
+  // gets array of  rows , Dataframe is a distributed collection of rows that are confirming to a schema.
   firstDF.take(10).foreach(println)
 
   // spark types
@@ -38,7 +38,7 @@ object DataFramesBasics extends App {
     StructField("Acceleration", DoubleType),
     StructField("Year", StringType),
     StructField("Origin", StringType)
-  ))
+  )) // datatypes are known to spark when the data frame is being used not at compile time. ( it can be made available at compile time with typesafe datasets )
 
   // obtain a schema
   val carsDFSchema = firstDF.schema

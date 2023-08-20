@@ -32,7 +32,7 @@ object DataSources extends App {
   val carsDF = spark.read
     .format("json")
     .schema(carsSchema) // enforce a schema
-    .option("mode", "failFast") // dropMalformed, permissive (default)
+    .option("mode", "failFast") // dropMalformed (ignore faulty rows -> Throws Exception ) , permissive (default)
     .option("path", "src/main/resources/data/cars.json")
     .load()
 
@@ -62,7 +62,7 @@ object DataSources extends App {
   spark.read
     .schema(carsSchema)
     .option("dateFormat", "YYYY-MM-dd") // couple with schema; if Spark fails parsing, it will put null
-    .option("allowSingleQuotes", "true")
+    .option("allowSingleQuotes", "true") // for json with single quotes
     .option("compression", "uncompressed") // bzip2, gzip, lz4, snappy, deflate
     .json("src/main/resources/data/cars.json")
 
@@ -78,10 +78,10 @@ object DataSources extends App {
     .option("dateFormat", "MMM dd YYYY")
     .option("header", "true")
     .option("sep", ",")
-    .option("nullValue", "")
+    .option("nullValue", "") // tells spark to parse "" as null in resulting df
     .csv("src/main/resources/data/stocks.csv")
 
-  // Parquet
+  // Parquet -> optimized for fast reading of columns (default storage format in spark )
   carsDF.write
     .mode(SaveMode.Overwrite)
     .save("src/main/resources/data/cars.parquet")
